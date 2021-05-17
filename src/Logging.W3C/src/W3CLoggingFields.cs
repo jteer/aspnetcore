@@ -90,58 +90,38 @@ namespace Microsoft.Extensions.Logging.W3C
         ProtocolStatus = 0x800,
 
         /// <summary>
-        /// Flag for logging the number of bytes
-        /// sent by the server.
-        /// </summary>
-        BytesSent = 0x1000,
-
-        /// <summary>
-        /// Flag for logging the number of bytes
-        /// received by the server.
-        /// </summary>
-        BytesReceived = 0x2000,
-
-        /// <summary>
         /// Flag for logging the duration of time,
         /// in milliseconds, that the action consumed.
         /// </summary>
-        TimeTaken = 0x4000,
+        TimeTaken = 0x1000,
 
         /// <summary>
         /// Flag for logging the protocol (HTTP, FTP) version
         /// used by the client. For HTTP this will be either
         /// HTTP 1.0 or HTTP 1.1.
         /// </summary>
-        ProtocolVersion = 0x8000,
+        ProtocolVersion = 0x2000,
 
         /// <summary>
         /// Flag for logging the content of the host header.
         /// </summary>
-        Host = 0x10000,
+        Host = 0x4000,
 
         /// <summary>
         /// Flag for logging the browser used on the client.
         /// </summary>
-        UserAgent = 0x20000,
+        UserAgent = 0x8000,
 
         /// <summary>
         /// Flag for logging the content of the cookie
-        /// sent or received, if any.
+        /// sent by the client, if any.
         /// </summary>
-        Cookie = 0x40000,
-
-        /// <summary>
-        /// Flag for logging the previous site visited
-        /// by the user. This site provided a link to
-        /// the current site.
-        /// </summary>
-        Referrer = 0x80000,
+        Cookie = 0x10000,
 
         /// <summary>
         /// Flag for logging all possible fields.
         /// </summary>
         All = Date | Time | ClientIpAddress | UserName | ServiceName | ServerName | ServerIpAddress | ServerPort | Method |
-            UriStem | UriQuery | ProtocolStatus | BytesSent | BytesReceived | TimeTaken | ProtocolVersion | Host | UserAgent |
-            Cookie | Referrer
+            UriStem | UriQuery | ProtocolStatus | TimeTaken | ProtocolVersion | Host | UserAgent | Cookie
     }
 }

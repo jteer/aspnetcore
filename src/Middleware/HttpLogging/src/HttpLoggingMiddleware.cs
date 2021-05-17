@@ -185,6 +185,20 @@ namespace Microsoft.AspNetCore.HttpLogging
                     }
                 }
 
+                if (w3cEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestCookie))
+                {
+                    var cookies = request.Cookies;
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string key in cookies.Keys)
+                    {
+                        sb.Append(key);
+                        sb.Append(": ");
+                        sb.Append(cookies[key]);
+                        sb.Append(" ");
+                    }
+                    AddToList(w3cList, nameof(request.Cookies), sb.ToString());
+                }
+
                 if (httpEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestBody))
                 {
                     if (MediaTypeHelpers.TryGetEncodingForMediaType(request.ContentType,

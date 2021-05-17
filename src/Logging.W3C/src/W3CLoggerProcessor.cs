@@ -162,14 +162,6 @@ namespace Microsoft.Extensions.Logging.W3C
             {
                 sb.Append("sc-status ");
             }
-            if (_loggingFields.HasFlag(W3CLoggingFields.BytesSent))
-            {
-                sb.Append("sc-bytes ");
-            }
-            if (_loggingFields.HasFlag(W3CLoggingFields.BytesReceived))
-            {
-                sb.Append("cs-bytes ");
-            }
             if (_loggingFields.HasFlag(W3CLoggingFields.TimeTaken))
             {
                 sb.Append("time-taken ");
@@ -189,10 +181,6 @@ namespace Microsoft.Extensions.Logging.W3C
             if (_loggingFields.HasFlag(W3CLoggingFields.Cookie))
             {
                 sb.Append("cs(Cookie) ");
-            }
-            if (_loggingFields.HasFlag(W3CLoggingFields.Referrer))
-            {
-                sb.Append("cs(Referrer) ");
             }
 
             _fieldsDirective = sb.ToString().Trim();

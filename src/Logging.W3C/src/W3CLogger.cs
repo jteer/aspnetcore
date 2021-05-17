@@ -119,6 +119,10 @@ namespace Microsoft.Extensions.Logging.W3C
                     case nameof(ConnectionInfo.LocalPort):
                         elements[BitOperations.Log2((int)W3CLoggingFields.ServerPort)] = kvp.Value.Trim();
                         break;
+                    case nameof(HttpRequest.Cookies):
+                        // Cookie can have whitespace - we replace whitespace characters with the '+' character
+                        elements[BitOperations.Log2((int)W3CLoggingFields.Cookie)] = Regex.Replace(kvp.Value.Trim(), @"\s", "+");
+                        break;
                     default:
                         break;
                 }

@@ -139,16 +139,22 @@ namespace Microsoft.AspNetCore.HttpLogging
 
         RequestQuery = 0x10000,
 
+        RequestCookie = 0x20000,
+
         ConnectionInfoFields = ClientIpAddress | ServerIpAddress | ServerPort,
 
-        W3CFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod | ResponseStatusCode | RequestQuery,
+        W3CDefaultFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod | ResponseStatusCode | RequestQuery,
+
+        W3COptionalFields = RequestCookie,
+
+        W3CAllFields = W3CDefaultFields | W3COptionalFields,
 
         /// <summary>
         /// Flag for logging a collection of HTTP Request properties,
         /// including <see cref="RequestPath"/>, <see cref="RequestQueryString"/>, <see cref="RequestProtocol"/>,
         /// <see cref="RequestMethod"/>, and <see cref="RequestScheme"/>.
         /// </summary>
-        RequestProperties = RequestPath | RequestQueryString | RequestProtocol | RequestMethod | RequestScheme | RequestQuery,
+        RequestProperties = RequestPath | RequestQueryString | RequestProtocol | RequestMethod | RequestScheme | RequestQuery | RequestCookie,
 
         /// <summary>
         /// Flag for logging HTTP Request properties and headers.
@@ -179,12 +185,13 @@ namespace Microsoft.AspNetCore.HttpLogging
         Response = ResponseStatusCode | ResponseHeaders | ResponseBody,
 
         /// <summary>
-        /// Flag for logging both the HTTP Request and Response.
+        /// Flag for logging both the HTTP Request and Response,
+        /// in addition to all W3C Logging fields.
         /// Includes <see cref="Request"/> and <see cref="Response"/>.
         /// Logging the request and response body has performance implications, as it requires buffering
         /// the entire request and response body up to the <see cref="HttpLoggingOptions.RequestBodyLogLimit"/>
         /// and <see cref="HttpLoggingOptions.ResponseBodyLogLimit"/>.
         /// </summary>
-        All = Request | Response | W3CFields
+        All = Request | Response | W3CAllFields
     }
 }
