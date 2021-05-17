@@ -37,7 +37,7 @@ namespace Microsoft.AspNetCore.HttpLogging
         /// Query: ?index=1
         /// </p>
         /// </summary>
-        RequestQuery = 0x2,
+        RequestQueryString = 0x2,
 
         /// <summary>
         /// Flag for logging the HTTP Request <see cref="HttpRequest.Protocol"/>.
@@ -137,16 +137,18 @@ namespace Microsoft.AspNetCore.HttpLogging
 
         ServerPort = 0x8000,
 
+        RequestQuery = 0x10000,
+
         ConnectionInfoFields = ClientIpAddress | ServerIpAddress | ServerPort,
 
-        W3CFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod,
+        W3CFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod | ResponseStatusCode | RequestQuery,
 
         /// <summary>
         /// Flag for logging a collection of HTTP Request properties,
-        /// including <see cref="RequestPath"/>, <see cref="RequestQuery"/>, <see cref="RequestProtocol"/>,
+        /// including <see cref="RequestPath"/>, <see cref="RequestQueryString"/>, <see cref="RequestProtocol"/>,
         /// <see cref="RequestMethod"/>, and <see cref="RequestScheme"/>.
         /// </summary>
-        RequestProperties = RequestPath | RequestQuery | RequestProtocol | RequestMethod | RequestScheme,
+        RequestProperties = RequestPath | RequestQueryString | RequestProtocol | RequestMethod | RequestScheme | RequestQuery,
 
         /// <summary>
         /// Flag for logging HTTP Request properties and headers.

@@ -154,9 +154,23 @@ namespace Microsoft.AspNetCore.HttpLogging
                     AddToList(list, nameof(request.Path), request.Path);
                 }
 
-                if (httpEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestQuery))
+                if (httpEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestQueryString))
                 {
                     AddToList(list, nameof(request.QueryString), request.QueryString.Value);
+                }
+
+                if (w3cEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestQuery))
+                {
+                    var query = request.Query;
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string key in query.Keys)
+                    {
+                        sb.Append(key);
+                        sb.Append(": ");
+                        sb.Append(query[key]);
+                        sb.Append(" ");
+                    }
+                    AddToList(w3cList, nameof(request.Query), sb.ToString());
                 }
 
                 if (httpEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestHeaders))
@@ -230,10 +244,16 @@ namespace Microsoft.AspNetCore.HttpLogging
                     requestBufferingStream.LogRequestBody();
                 }
 
-                if (responseBufferingStream == null || responseBufferingStream.FirstWrite == false)
+                if (w3cEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.ResponseStatusCode))
+                {
+                    w3cList.Add(new KeyValuePair<string, string?>(nameof(response.StatusCode),
+                        response.StatusCode.ToString(CultureInfo.InvariantCulture)));
+                }
+
+                if (httpEnabled && (responseBufferingStream == null || responseBufferingStream.FirstWrite == false))
                 {
                     // No body, write headers here.
-                    LogResponseHeaders(response, options, _httpLogger, w3cList, httpEnabled, w3cEnabled);
+                    LogResponseHeaders(response, options, _httpLogger);
                 }
 
                 if (httpEnabled && responseBufferingStream != null)
@@ -282,35 +302,6 @@ namespace Microsoft.AspNetCore.HttpLogging
             {
                 list.Add(new KeyValuePair<string, string?>(nameof(response.StatusCode),
                     response.StatusCode.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            if (options.LoggingFields.HasFlag(HttpLoggingFields.ResponseHeaders))
-            {
-                FilterHeaders(list, response.Headers, options._internalResponseHeaders);
-            }
-
-            var httpResponseLog = new HttpResponseLog(list);
-
-            logger.ResponseLog(httpResponseLog);
-        }
-
-        private static void LogResponseHeaders(HttpResponse response, HttpLoggingOptions options, ILogger logger, List<KeyValuePair<string, string?>> w3cList, bool httpEnabled, bool w3cEnabled)
-        {
-            var list = new List<KeyValuePair<string, string?>>(
-                response.Headers.Count + DefaultResponseFieldsMinusHeaders);
-
-            if (options.LoggingFields.HasFlag(HttpLoggingFields.ResponseStatusCode))
-            {
-                if (httpEnabled)
-                {
-                    list.Add(new KeyValuePair<string, string?>(nameof(response.StatusCode),
-                        response.StatusCode.ToString(CultureInfo.InvariantCulture)));
-                }
-                if (w3cEnabled)
-                {
-                    w3cList.Add(new KeyValuePair<string, string?>(nameof(response.StatusCode),
-                        response.StatusCode.ToString(CultureInfo.InvariantCulture)));
-                }
             }
 
             if (options.LoggingFields.HasFlag(HttpLoggingFields.ResponseHeaders))

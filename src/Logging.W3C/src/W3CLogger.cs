@@ -59,9 +59,6 @@ namespace Microsoft.Extensions.Logging.W3C
                 return;
             }
 
-            System.Console.WriteLine(eventId.Name);
-            System.Console.WriteLine(eventId.Id);
-
             if (state is IReadOnlyCollection<KeyValuePair<string, object>> statePropertyObjects)
             {
                 List<KeyValuePair<string, string>> asStrings = new List<KeyValuePair<string, string>>();
