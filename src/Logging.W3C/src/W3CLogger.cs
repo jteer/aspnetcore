@@ -102,9 +102,13 @@ namespace Microsoft.Extensions.Logging.W3C
                         elements[BitOperations.Log2((int)W3CLoggingFields.UserAgent)] = Regex.Replace(kvp.Value.Trim(), @"\s", "+");
                         break;
                     case nameof(DateTime):
-                        DateTime dto = DateTime.Parse(kvp.Value, CultureInfo.InvariantCulture);
-                        elements[BitOperations.Log2((int)W3CLoggingFields.Date)] = dto.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                        elements[BitOperations.Log2((int)W3CLoggingFields.Time)] = dto.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+                        DateTime dt = DateTime.Parse(kvp.Value, CultureInfo.InvariantCulture);
+                        elements[BitOperations.Log2((int)W3CLoggingFields.Date)] = dt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                        elements[BitOperations.Log2((int)W3CLoggingFields.Time)] = dt.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+                        // We estimate time elapsed by diffing the current time with the time at which the middleware processed the request/response.
+                        // This will represent the time in whole & fractional milliseconds.
+                        var elapsed = DateTime.Now.Subtract(dt);
+                        elements[BitOperations.Log2((int)W3CLoggingFields.TimeTaken)] = elapsed.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
                         break;
                     case nameof(ConnectionInfo.RemoteIpAddress):
                         elements[BitOperations.Log2((int)W3CLoggingFields.ClientIpAddress)] = kvp.Value.Trim();
@@ -124,6 +128,7 @@ namespace Microsoft.Extensions.Logging.W3C
             {
                 if (_loggingFields.HasFlag((W3CLoggingFields)(1 << i)))
                 {
+                    // If the element was not logged, or was the empty strong, we log it as a dash
                     if (String.IsNullOrEmpty(elements[i]))
                     {
                         sb.Append("- ");
