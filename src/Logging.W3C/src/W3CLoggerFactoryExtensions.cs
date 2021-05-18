@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -13,9 +14,9 @@ namespace Microsoft.Extensions.Logging.W3C
                 throw new ArgumentNullException(nameof(builder));
             }
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, W3CLoggerProvider>());
-            builder.AddFilter((category, provider, logLevel) =>
+            builder.AddFilter((provider, category, logLevel) =>
             {
-                return (category.Equals("Microsoft.AspNetCore.W3CLogging") && provider.Equals("Microsoft.Aspnetcore.W3CLoggerProvider") && logLevel >= LogLevel.Information);
+                return (provider.Equals(typeof (Microsoft.Extensions.Logging.W3C.W3CLoggerProvider).ToString()) && category.Equals("Microsoft.AspNetCore.W3CLogging")) && logLevel >= LogLevel.Information;
             });
             return builder;
         }

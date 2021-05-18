@@ -53,13 +53,18 @@ namespace Microsoft.AspNetCore.HttpLogging
         /// the header name will be logged with a redacted value.
         /// </p>
         /// </summary>
-        public ISet<string> ResponseHeaders => _internalResponseHeaders;
+        public ISet<string> ResponseHeaders => _internalHttpResponseHeaders;
 
-        internal HashSet<string> _internalResponseHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal HashSet<string> _internalHttpResponseHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             HeaderNames.ContentLength,
             HeaderNames.ContentType,
             HeaderNames.TransferEncoding
+        };
+
+        internal HashSet<string> _internalW3CResponseHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            HeaderNames.Server
         };
 
         /// <summary>

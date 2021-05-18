@@ -65,6 +65,7 @@ namespace Microsoft.AspNetCore.HttpLogging
         /// <returns></returns>HttpResponseLog.cs
         public Task Invoke(HttpContext context)
         {
+            Debugger.Launch();
             var httpEnabled = _httpLogger.IsEnabled(LogLevel.Information);
             var w3cEnabled = _w3cLogger.IsEnabled(LogLevel.Information);
             if (!httpEnabled && !w3cEnabled)
@@ -166,14 +167,14 @@ namespace Microsoft.AspNetCore.HttpLogging
                     foreach (string key in query.Keys)
                     {
                         sb.Append(key);
-                        sb.Append(": ");
+                        sb.Append(":");
                         sb.Append(query[key]);
-                        sb.Append(" ");
+                        sb.Append(";");
                     }
                     AddToList(w3cList, nameof(request.Query), sb.ToString());
                 }
 
-                if (httpEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.RequestHeaders))
+                if (options.LoggingFields.HasFlag(HttpLoggingFields.RequestHeaders))
                 {
                     if (httpEnabled)
                     {
@@ -181,7 +182,7 @@ namespace Microsoft.AspNetCore.HttpLogging
                     }
                     if (w3cEnabled)
                     {
-                        FilterHeaders(w3cList, request.Headers, options._internalW3CRequestHeaders);
+                        WriteHeaders(list, request.Headers, options._internalW3CRequestHeaders);
                     }
                 }
 
@@ -192,9 +193,9 @@ namespace Microsoft.AspNetCore.HttpLogging
                     foreach (string key in cookies.Keys)
                     {
                         sb.Append(key);
-                        sb.Append(": ");
+                        sb.Append(":");
                         sb.Append(cookies[key]);
-                        sb.Append(" ");
+                        sb.Append(";");
                     }
                     AddToList(w3cList, nameof(request.Cookies), sb.ToString());
                 }
@@ -264,6 +265,11 @@ namespace Microsoft.AspNetCore.HttpLogging
                         response.StatusCode.ToString(CultureInfo.InvariantCulture)));
                 }
 
+                if (w3cEnabled && options.LoggingFields.HasFlag(HttpLoggingFields.ResponseHeaders))
+                {
+                    WriteHeaders(w3cList, response.Headers, options._internalW3CResponseHeaders);
+                }
+
                 if (httpEnabled && (responseBufferingStream == null || responseBufferingStream.FirstWrite == false))
                 {
                     // No body, write headers here.
@@ -281,7 +287,7 @@ namespace Microsoft.AspNetCore.HttpLogging
                 if (w3cEnabled && w3cList.Count > 0)
                 {
                     var httpW3CLog = new HttpW3CLog(w3cList);
-                    _httpLogger.W3CLog(httpW3CLog);
+                    _w3cLogger.W3CLog(httpW3CLog);
                 }
             }
             finally
@@ -320,7 +326,7 @@ namespace Microsoft.AspNetCore.HttpLogging
 
             if (options.LoggingFields.HasFlag(HttpLoggingFields.ResponseHeaders))
             {
-                FilterHeaders(list, response.Headers, options._internalResponseHeaders);
+                FilterHeaders(list, response.Headers, options._internalHttpResponseHeaders);
             }
 
             var httpResponseLog = new HttpResponseLog(list);
@@ -341,6 +347,19 @@ namespace Microsoft.AspNetCore.HttpLogging
                     continue;
                 }
                 keyValues.Add(new KeyValuePair<string, string?>(key, value.ToString()));
+            }
+        }
+
+        internal static void WriteHeaders(List<KeyValuePair<string, string?>> keyValues,
+            IHeaderDictionary headers,
+            HashSet<string> allowedHeaders)
+        {
+            foreach (var (key, value) in headers)
+            {
+                if (allowedHeaders.Contains(key))
+                {
+                    keyValues.Add(new KeyValuePair<string, string?>(key, value.ToString()));
+                }
             }
         }
     }

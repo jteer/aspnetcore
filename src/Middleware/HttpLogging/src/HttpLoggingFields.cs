@@ -143,7 +143,7 @@ namespace Microsoft.AspNetCore.HttpLogging
 
         ConnectionInfoFields = ClientIpAddress | ServerIpAddress | ServerPort,
 
-        W3CDefaultFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod | ResponseStatusCode | RequestQuery,
+        W3CDefaultFields = DateTime | ConnectionInfoFields | RequestHeaders | RequestProtocol | RequestMethod | RequestQuery | ResponseStatusCode | ResponseHeaders,
 
         W3COptionalFields = RequestCookie,
 

@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +24,10 @@ namespace SocialWeather
             services.AddSingleton<PipeWeatherStreamFormatter>();
             services.AddSingleton<ProtobufWeatherStreamFormatter>();
             services.AddSingleton<FormatterResolver>();
+            services.AddHttpLogging(logging =>
+            {
+                logging.LoggingFields = HttpLoggingFields.All;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -31,6 +36,8 @@ namespace SocialWeather
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHttpLogging();
 
             app.UseFileServer();
 

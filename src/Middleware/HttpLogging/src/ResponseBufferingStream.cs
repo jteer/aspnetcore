@@ -135,7 +135,6 @@ namespace Microsoft.AspNetCore.HttpLogging
                 // Log headers as first write occurs (headers locked now)
                 HttpLoggingMiddleware.LogResponseHeaders(_context.Response, _options, _logger);
 
-                Debugger.Launch();
                 MediaTypeHelpers.TryGetEncodingForMediaType(_context.Response.ContentType, _encodings, out _encoding);
                 FirstWrite = true;
             }

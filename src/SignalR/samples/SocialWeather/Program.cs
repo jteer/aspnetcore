@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.W3C;
 
 namespace SocialWeather
 {
@@ -13,6 +14,10 @@ namespace SocialWeather
     {
         public static Task Main(string[] args)
         {
+            var loggerFactory = LoggerFactory.Create(logging =>
+            {
+                logging.AddConsole();
+            });
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHost(webHostBuilder =>
                 {
@@ -20,8 +25,10 @@ namespace SocialWeather
                     .UseSetting(WebHostDefaults.PreventHostingStartupKey, "true")
                     .ConfigureLogging(factory =>
                     {
+                        factory.ClearProviders();
                         factory.AddConsole();
                         factory.AddFilter("Console", level => level >= LogLevel.Information);
+                        factory.AddW3CLogger();
                     })
                     .UseKestrel()
                     .UseContentRoot(Directory.GetCurrentDirectory())

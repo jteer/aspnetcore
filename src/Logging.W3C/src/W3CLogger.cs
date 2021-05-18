@@ -31,8 +31,8 @@ namespace Microsoft.Extensions.Logging.W3C
             _name = name;
             _options = options;
 
-            // If the info isn't coming from HttpLoggingMiddleware, no-op (don't log anything)
-            if (name == "Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware")
+            // If the info isn't coming from the _w3cLogger in HttpLoggingMiddleware, don't log anything
+            if (name == "Microsoft.AspNetCore.W3CLogging")
             {
                 _isActive = true;
                 _messageQueue = new W3CLoggerProcessor(_options);
@@ -94,7 +94,7 @@ namespace Microsoft.Extensions.Logging.W3C
                     case nameof(HttpRequest.Protocol):
                         elements[BitOperations.Log2((int)W3CLoggingFields.ProtocolVersion)] = kvp.Value.Trim();
                         break;
-                    case nameof(HttpRequest.Host):
+                    case nameof(HeaderNames.Host):
                         elements[BitOperations.Log2((int)W3CLoggingFields.Host)] = kvp.Value.Trim();
                         break;
                     case "User-Agent":
@@ -109,6 +109,9 @@ namespace Microsoft.Extensions.Logging.W3C
                         // This will represent the time in whole & fractional milliseconds.
                         var elapsed = DateTime.Now.Subtract(dt);
                         elements[BitOperations.Log2((int)W3CLoggingFields.TimeTaken)] = elapsed.TotalMilliseconds.ToString(CultureInfo.InvariantCulture);
+                        break;
+                    case nameof(HeaderNames.Server):
+                        elements[BitOperations.Log2((int)W3CLoggingFields.ServerName)] = kvp.Value.Trim();
                         break;
                     case nameof(ConnectionInfo.RemoteIpAddress):
                         elements[BitOperations.Log2((int)W3CLoggingFields.ClientIpAddress)] = kvp.Value.Trim();
