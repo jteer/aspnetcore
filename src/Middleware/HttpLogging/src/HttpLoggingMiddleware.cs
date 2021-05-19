@@ -27,6 +27,7 @@ namespace Microsoft.AspNetCore.HttpLogging
         private readonly ILogger _httpLogger;
         private readonly ILogger _w3cLogger;
         private readonly IOptionsMonitor<HttpLoggingOptions> _options;
+        IOptions<LoggerFilterOptions> _filterOptions;
         private const int DefaultRequestFieldsMinusHeaders = 7;
         private const int DefaultResponseFieldsMinusHeaders = 2;
         private const string Redacted = "[Redacted]";
@@ -37,7 +38,8 @@ namespace Microsoft.AspNetCore.HttpLogging
         /// <param name="next"></param>
         /// <param name="options"></param>
         /// <param name="loggerFactory"></param>
-        public HttpLoggingMiddleware(RequestDelegate next, IOptionsMonitor<HttpLoggingOptions> options, ILoggerFactory loggerFactory)
+        /// <param name="filterOptions"></param>
+        public HttpLoggingMiddleware(RequestDelegate next, IOptionsMonitor<HttpLoggingOptions> options, ILoggerFactory loggerFactory, IOptions<LoggerFilterOptions> filterOptions)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
 
@@ -51,6 +53,7 @@ namespace Microsoft.AspNetCore.HttpLogging
                 throw new ArgumentNullException(nameof(loggerFactory));
             }
 
+            _filterOptions = filterOptions;
             _options = options;
 
             _httpLogger = loggerFactory.CreateLogger<HttpLoggingMiddleware>();

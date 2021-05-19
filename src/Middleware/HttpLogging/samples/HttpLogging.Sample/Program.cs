@@ -11,17 +11,13 @@ namespace HttpLogging.Sample
     {
         public static void Main(string[] args)
         {
-            var loggerFactory = LoggerFactory.Create(logging =>
-            {
-                logging.AddConsole();
-            });
             //loggerFactory.CreateLogger()
             CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(logging =>
+                /*.ConfigureLogging(logging =>
                 {
                     // Json Logging
                     logging.ClearProviders();
@@ -32,8 +28,8 @@ namespace HttpLogging.Sample
                             Indented = true
                         };
                     });
-                    logging.AddW3CLogger();
-                })
+                    //logging.AddW3CLogger();
+                }) */
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
