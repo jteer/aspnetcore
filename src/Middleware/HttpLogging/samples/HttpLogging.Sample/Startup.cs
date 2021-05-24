@@ -21,15 +21,6 @@ namespace HttpLogging.Sample
             {
                 logging.LoggingFields = HttpLoggingFields.All;
             });
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, W3CLoggerProvider>());
-            services.Configure<LoggerFilterOptions>(options =>
-            {
-                var rule = new LoggerFilterRule(typeof(Microsoft.Extensions.Logging.W3C.W3CLoggerProvider).ToString(), "Microsoft.AspNetCore.W3CLogging", LogLevel.Critical, null);
-                var anotherRule = new LoggerFilterRule("", "Microsoft.AspNetCore.W3CLogging", LogLevel.None, null);
-                options.Rules.Add(rule);
-                options.Rules.Add(anotherRule);
-            });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

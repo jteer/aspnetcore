@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.HttpLogging
         private readonly ILogger _httpLogger;
         private readonly ILogger _w3cLogger;
         private readonly IOptionsMonitor<HttpLoggingOptions> _options;
-        IOptions<LoggerFilterOptions> _filterOptions;
+        private readonly IOptionsMonitor<LoggerFilterOptions> _filterOptions;
         private const int DefaultRequestFieldsMinusHeaders = 7;
         private const int DefaultResponseFieldsMinusHeaders = 2;
         private const string Redacted = "[Redacted]";
@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore.HttpLogging
         /// <param name="options"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="filterOptions"></param>
-        public HttpLoggingMiddleware(RequestDelegate next, IOptionsMonitor<HttpLoggingOptions> options, ILoggerFactory loggerFactory, IOptions<LoggerFilterOptions> filterOptions)
+        public HttpLoggingMiddleware(RequestDelegate next, IOptionsMonitor<HttpLoggingOptions> options, ILoggerFactory loggerFactory, IOptionsMonitor<LoggerFilterOptions> filterOptions)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
 
@@ -55,6 +55,9 @@ namespace Microsoft.AspNetCore.HttpLogging
 
             _filterOptions = filterOptions;
             _options = options;
+
+            // By default, disable sending events to W3CLogger
+            _filterOptions.CurrentValue.Rules.Add(new LoggerFilterRule(null, "Microsoft.AspNetCore.W3CLogging", LogLevel.None, null));
 
             _httpLogger = loggerFactory.CreateLogger<HttpLoggingMiddleware>();
             // TODO - change this, maybe proxy type

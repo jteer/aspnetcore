@@ -15,7 +15,6 @@ namespace Microsoft.Extensions.Logging.W3C
                 throw new ArgumentNullException(nameof(builder));
             }
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, W3CLoggerProvider>());
-            //builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<LoggerFilterOptions>>();
             builder.Services.Configure<LoggerFilterOptions>(options =>
             {
                 var rule = new LoggerFilterRule(typeof(Microsoft.Extensions.Logging.W3C.W3CLoggerProvider).ToString(), "Microsoft.AspNetCore.W3CLogging", LogLevel.Information, (provider, category, logLevel) =>

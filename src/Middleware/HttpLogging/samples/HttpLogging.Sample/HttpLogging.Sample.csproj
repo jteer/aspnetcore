@@ -12,6 +12,8 @@
     <Reference Include="Microsoft.Extensions.Logging.W3C" />
     <Reference Include="Microsoft.AspNetCore.HttpLogging" />
     <Reference Include="Microsoft.Extensions.Hosting" />
+    <Reference Include="C:\code\dotnet\runtime\artifacts\bin\Microsoft.Extensions.Logging\netstandard2.1-Debug\Microsoft.Extensions.Logging.dll" />
+    <Reference Include="C:\code\dotnet\runtime\artifacts\bin\Microsoft.Extensions.Logging.Abstractions\net6.0-Debug\Microsoft.Extensions.Logging.Abstractions.dll" />
   </ItemGroup>
 
 </Project>
