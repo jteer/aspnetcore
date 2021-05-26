@@ -44,7 +44,7 @@ namespace Microsoft.AspNetCore.RequestLimiter
             return builder;
         }
 
-        public static IEndpointConventionBuilder EnforceLimit(this IEndpointConventionBuilder builder, RateLimiter limiter)
+        public static IEndpointConventionBuilder EnforceLimit(this IEndpointConventionBuilder builder, ResourceLimiter limiter)
         {
 
             builder.Add(endpointBuilder =>
@@ -60,7 +60,7 @@ namespace Microsoft.AspNetCore.RequestLimiter
         {
             builder.Add(endpointBuilder =>
             {
-                endpointBuilder.Metadata.Add(new RequestLimitAttribute(new RequestLimitRegistration(services => services.GetRequiredService<TResourceLimiter>())));
+                endpointBuilder.Metadata.Add(new RequestLimitAttribute(services => services.GetRequiredService<TResourceLimiter>()));
             });
             return builder;
         }
@@ -70,7 +70,7 @@ namespace Microsoft.AspNetCore.RequestLimiter
         {
             builder.Add(endpointBuilder =>
             {
-                endpointBuilder.Metadata.Add(new RequestLimitAttribute(new RequestLimitRegistration(services => services.GetRequiredService<TAggregatedResourceLimiter>())));
+                endpointBuilder.Metadata.Add(new RequestLimitAttribute(services => services.GetRequiredService<TAggregatedResourceLimiter>()));
             });
             return builder;
         }

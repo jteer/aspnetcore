@@ -7,9 +7,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.AspNetCore.RequestLimiter
 {
-    /// <summary>
-    /// Specifies that the class or method that this attribute is applied to requires the specified authorization.
-    /// </summary>
     // TODO: Double check ordering
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class RequestLimitAttribute : Attribute
@@ -22,27 +19,26 @@ namespace Microsoft.AspNetCore.RequestLimiter
         }
 
         public RequestLimitAttribute(long requestPerSecond)
-            : this(new RateLimiter(requestPerSecond, requestPerSecond))
-        { }
+            : this(new TokenBucketRateLimiter(requestPerSecond, requestPerSecond)) { }
 
         public RequestLimitAttribute(ResourceLimiter limiter)
-        {
-            LimiterRegistration = new RequestLimitRegistration(limiter);
-        }
+            : this(_ => new AggregatedResourceLimiterOfHttpContextWrapper(limiter)) { }
 
         public RequestLimitAttribute(AggregatedResourceLimiter<HttpContext> limiter)
+            : this(_ => limiter) { }
+
+        internal RequestLimitAttribute(Func<IServiceProvider, ResourceLimiter> resolveLimiter)
         {
-            LimiterRegistration = new RequestLimitRegistration(limiter);
+            ResolveLimiter = services => new AggregatedResourceLimiterOfHttpContextWrapper(resolveLimiter(services));
         }
 
-        // TODO consider constructors that take in types for DI retrieval
-        public RequestLimitAttribute(RequestLimitRegistration registration)
+        internal RequestLimitAttribute(Func<IServiceProvider, AggregatedResourceLimiter<HttpContext>> resolveLimiter)
         {
-            LimiterRegistration = registration;
+            ResolveLimiter = resolveLimiter;
         }
 
-        public string? Policy { get; set; }
+        internal string? Policy { get; set; }
 
-        public RequestLimitRegistration? LimiterRegistration { get; set; }
+        internal Func<IServiceProvider, AggregatedResourceLimiter<HttpContext>>? ResolveLimiter { get; set; }
     }
 }
